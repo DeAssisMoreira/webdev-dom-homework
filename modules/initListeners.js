@@ -10,12 +10,27 @@ export const initLikeListeners = (renderComments) => {
             const index = addLike.dataset.index
             const comment = comments[index]
 
-            comment.likes = comment.isLiked
+            function delay(interval = 300) {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve()
+                    }, interval)
+                })
+            }
+            delay(1000).then(() => {
+                comment.likes = comment.isLiked
+                    ? comment.likes - 1
+                    : comment.likes + 1
+                comment.isLiked = !comment.isLiked
+                comment.isLikeLoading = true
+                renderComments()
+            })
+            /*comment.likes = comment.isLiked
                 ? comment.likes - 1
                 : comment.likes + 1
 
             comment.isLiked = !comment.isLiked
-            renderComments()
+            renderComments() */
         })
     }
 }
@@ -43,8 +58,14 @@ export const initAddCommentListener = (renderComments) => {
             return
         }
 
-        postComment(deleteHtml(text.value), deleteHtml(name.value)).then(
+        document.querySelector('.form-loading').style.display = 'block'
+        document.querySelector('.add-form').style.display = 'none'
+
+        postComment(deleteHtml(name.value), deleteHtml(text.value)).then(
             (data) => {
+                document.querySelector('.form-loading').style.display = 'none'
+                document.querySelector('.add-form').style.display = 'flex'
+
                 updateComments(data)
                 renderComments()
                 name.value = ''

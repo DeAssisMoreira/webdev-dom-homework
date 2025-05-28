@@ -24,8 +24,8 @@ export const postComment = (name, text) => {
     return fetch(host + '/comments', {
         method: 'POST',
         body: JSON.stringify({
-            text,
             name,
+            text,
         }),
     }).then(() => {
         return fetchComments()
