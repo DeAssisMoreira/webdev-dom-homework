@@ -1,4 +1,5 @@
-import { comments } from './comments.js'
+import { postComment } from './api.js'
+import { comments, updateComments } from './comments.js'
 import { deleteHtml } from './sanitizeHtml.js'
 
 export const initLikeListeners = (renderComments) => {
@@ -41,17 +42,14 @@ export const initAddCommentListener = (renderComments) => {
             alert('Заполните все поля')
             return
         }
-        const newComment = {
-            name: deleteHtml(name.value),
-            text: deleteHtml(text.value),
-            date: new Date(),
-            likes: 0,
-            isLiked: false,
-        }
-        comments.push(newComment)
 
-        renderComments()
-        name.value = ''
-        text.value = ''
+        postComment(deleteHtml(text.value), deleteHtml(name.value)).then(
+            (data) => {
+                updateComments(data)
+                renderComments()
+                name.value = ''
+                text.value = ''
+            },
+        )
     })
 }
