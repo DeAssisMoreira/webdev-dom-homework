@@ -1,4 +1,4 @@
-import { postComment } from './api.js'
+import { fetchComments, postComment } from './api.js'
 import { comments, updateComments } from './comments.js'
 import { deleteHtml } from './sanitizeHtml.js'
 
@@ -73,4 +73,17 @@ export const initAddCommentListener = (renderComments) => {
             },
         )
     })
+}
+
+export const likesAnimation = document.querySelectorAll('.like-button')
+for (likesAnimations of likesAnimation) {
+    likesAnimations.addEventListener(
+        'click',
+        () => {
+            likesAnimation.classList.add('like-loading')
+        },
+        setTimeout(() => {
+            likesAnimation.classList.remove('like-loading')
+        }, 1000),
+    )
 }

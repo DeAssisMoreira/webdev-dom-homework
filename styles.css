@@ -102,7 +102,7 @@ body {
     }
 }
 .like-loading {
-    animation: rotating 2s linear infinite;
+    animation: rotating 2s linear;
 }
 
 .-active-like {
