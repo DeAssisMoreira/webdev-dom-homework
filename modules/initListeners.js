@@ -1,4 +1,4 @@
-import { postComment } from './api.js'
+import { fetchComments, postComment } from './api.js'
 import { comments, updateComments } from './comments.js'
 import { deleteHtml } from './sanitizeHtml.js'
 
@@ -10,12 +10,26 @@ export const initLikeListeners = (renderComments) => {
             const index = addLike.dataset.index
             const comment = comments[index]
 
-            comment.likes = comment.isLiked
-                ? comment.likes - 1
-                : comment.likes + 1
+            addLike.classList.add('like-loading')
 
-            comment.isLiked = !comment.isLiked
-            renderComments()
+            function delay(interval = 300) {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve()
+                    }, interval)
+                })
+            }
+            delay(1000).then(() => {
+                comment.likes = comment.isLiked
+                    ? comment.likes - 1
+                    : comment.likes + 1
+                comment.isLiked = !comment.isLiked
+                comment.isLikeLoading = true
+
+                addLike.classList.remove('like-loading')
+
+                renderComments()
+            })
         })
     }
 }
@@ -43,13 +57,34 @@ export const initAddCommentListener = (renderComments) => {
             return
         }
 
-        postComment(deleteHtml(text.value), deleteHtml(name.value)).then(
-            (data) => {
+        document.querySelector('.form-loading').style.display = 'block'
+        document.querySelector('.add-form').style.display = 'none'
+
+        postComment(deleteHtml(name.value), deleteHtml(text.value))
+            .then(() => {
+                return fetchComments()
+            })
+            .then((data) => {
+                document.querySelector('.form-loading').style.display = 'none'
+                document.querySelector('.add-form').style.display = 'flex'
+
                 updateComments(data)
                 renderComments()
                 name.value = ''
                 text.value = ''
-            },
-        )
+            })
     })
+}
+
+export const likesAnimation = document.querySelectorAll('.like-button')
+for (likesAnimations of likesAnimation) {
+    likesAnimations.addEventListener(
+        'click',
+        () => {
+            likesAnimation.classList.add('like-loading')
+        },
+        setTimeout(() => {
+            likesAnimation.classList.remove('like-loading')
+        }, 1000),
+    )
 }
