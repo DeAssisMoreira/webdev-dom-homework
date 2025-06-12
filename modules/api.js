@@ -30,6 +30,7 @@ export const postComment = (name, text, retryCount = 3) => {
         }),
     }).then((response) => {
         if (response.status === 500 && retryCount > 0) {
+            alert("Ошибка сервера")
             return new Promise((resolve) => {
                 setTimeout(() => {
                     resolve(postComment(name, text, retryCount - 1))
