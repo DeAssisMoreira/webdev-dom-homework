@@ -20,12 +20,32 @@ export const fetchComments = () => {
         })
 }
 
-export const postComment = (name, text) => {
+export const postComment = (name, text, retryCount = 3) => {
     return fetch(host + '/comments', {
         method: 'POST',
         body: JSON.stringify({
             name,
             text,
+            forceError: true,
         }),
+    }).then((response) => {
+        if (response.status === 500 && retryCount > 0) {
+            alert("Ошибка сервера")
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(postComment(name, text, retryCount - 1))
+                }, 1000)
+            })
+        }
+
+        if (response.status === 500) {
+            throw new Error('Ошибка сервера')
+        }
+        if (response.status === 400) {
+            throw new Error('Количество символов должно быть не менее трех')
+        }
+        if (response.status === 201) {
+            return response.json()
+        }
     })
 }

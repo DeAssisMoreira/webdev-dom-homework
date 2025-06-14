@@ -73,6 +73,33 @@ export const initAddCommentListener = (renderComments) => {
                 name.value = ''
                 text.value = ''
             })
+            .catch((error) => {
+                document.querySelector('.form-loading').style.display = 'none'
+                document.querySelector('.add-form').style.display = 'flex'
+
+                if (error.message === 'Failed to fetch') {
+                    alert('Отсутствует подключение к интернету')
+                }
+
+                if (error.message === 'Ошибка сервера') {
+                    alert('Ошибка сервера')
+                }
+
+                if (
+                    error.message ===
+                    'Количество символов должно быть не менее трех'
+                ) {
+                    alert('Количество символов должно быть не менее трех')
+
+                    name.classList.add('-error')
+                    text.classList.add('-error')
+
+                    setTimeout(() => {
+                        name.classList.remove('-error')
+                        text.classList.remove('-error')
+                    }, 2000)
+                }
+            })
     })
 }
 

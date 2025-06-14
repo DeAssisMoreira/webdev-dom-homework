@@ -149,3 +149,22 @@ body {
 .add-form-button:hover {
     opacity: 0.9;
 }
+
+@keyframes errorFlash {
+    0% {
+        background-color: red;
+    }
+    100% {
+        background-color: white;
+    }
+}
+@keyframes shake {
+    0%, 100% {transform: translateX(0);}
+    10%, 30%, 50%, 70%, 90% {transform: translateX(-3px);}
+    20%, 40%, 60%, 80% {transform: translateX(3px);}
+}
+.-error {
+    animation: 
+    errorFlash 2s ease-out,
+    shake 0.5s ease-in-out;
+}
